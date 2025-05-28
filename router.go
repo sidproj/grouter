@@ -12,6 +12,12 @@ type ctxKey string
 
 const pathParamsKey ctxKey = "pathParams"
 
+var notFoundPagePath = "views\\404.html"
+
+func Set404Path(path string){
+	notFoundPagePath = path
+}
+
 type handlers struct{
 	get func(w http.ResponseWriter,r *http.Request)
 	post func(w http.ResponseWriter,r *http.Request)
@@ -130,7 +136,7 @@ var rootNode = RouterNode{
 }
 
 // provides mapping for all the requests
-func wrapper() func (w http.ResponseWriter,r *http.Request){
+func dispatchHandler() func (w http.ResponseWriter,r *http.Request){
 	return func(w http.ResponseWriter,r *http.Request){
 		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
 		if r.URL.Path == ""{
@@ -144,7 +150,7 @@ func wrapper() func (w http.ResponseWriter,r *http.Request){
 			findNode,params := rootNode.findHandler(r.URL.Path)
 		
 			if(findNode==nil){
-				http.ServeFile(w,r,"views\\404.html")
+				http.ServeFile(w,r,notFoundPagePath)
 				return	
 			}
 			node = findNode
@@ -173,5 +179,5 @@ func wrapper() func (w http.ResponseWriter,r *http.Request){
 }
 
 func LoadRoutes(){
-	http.HandleFunc("/",wrapper())
+	http.HandleFunc("/",dispatchHandler())
 }
