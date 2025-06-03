@@ -146,7 +146,6 @@ func dispatchHandler() func (w http.ResponseWriter,r *http.Request){
 		
 		node := &rootNode
 		if r.URL.Path!="/"{
-			fmt.Println("Started finding node...")
 			findNode,params := rootNode.findHandler(r.URL.Path)
 		
 			if(findNode==nil){
